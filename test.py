@@ -44,8 +44,12 @@ print "Data Init: %s" %(str(network.check_all_tables_init()))
 #a = network.copy_network()
 #a.print_network()
 
+a = network.topological_sort()
+print "TOPOLOGICAL SORT"
+print a[0].children
+
 print "Cycles present in graph: %s" %(str(network.check_cycles()))
-network.print_network()
+#network.print_network()
 
 
 

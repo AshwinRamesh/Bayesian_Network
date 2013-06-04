@@ -7,6 +7,8 @@
 #
 
 from node import Node
+import random
+import copy
 
 class BayesianNetwork:
 
@@ -71,7 +73,8 @@ class BayesianNetwork:
 		for n in self.nodes: # copy all edges
 			for child in n.children:
 				network.connect_nodes(n.name,child.name)
-		# TODO copy all probabilities
+		for n in self.nodes: # copy probabilities
+			network.get_node(n.name).table = copy.deepcopy(n.table) #TODO check if this worked
 		return network
 
 	# get all nodes with no parent nodes
@@ -89,9 +92,10 @@ class BayesianNetwork:
 				return True
 		return False
 
-	# Use Topological Sort to check for cycles
-	def check_cycles(self):
+	# returns  a new list of the nodes in topological order (copy by reference - so children and parents are available)
+	def topological_sort(self):
 		sorted_list = []
+		return_list = []
 		network = self.copy_network() # copy of BN
 		network.print_network()
 		head_nodes = network.get_head_nodes() # list of head nodes
@@ -102,7 +106,17 @@ class BayesianNetwork:
 				network.deconnect_nodes(temp_node.name, child.name)
 				if not child.parents: # child has no other parent nodes
 					head_nodes.append(child)
-		return network.check_connections() # returns true if connections exist -> cycles
+		if (network.check_connections() == True):
+			return False 	# Cycles Present
+		for node in sorted_list:
+			return_list.append(self.get_node(node.name))
+		return return_list
+
+	# Use Topological Sort to check for cycles
+	def check_cycles(self):
+		if (self.topological_sort() == False):
+			return True # Cycles exist
+		return False
 
 	# Initialise all probability table items
 	# Ensure that no changes are made to the structure of the graph after this point.
@@ -140,13 +154,72 @@ class BayesianNetwork:
 		# Check everything has been initialised
 		return temp_node.check_all_probability_initialised()
 
+	# Calculates a sample weighting and returns both the outcome and weight
+	# sorted_nodes are a copy of nodes in self in topological order
+	# Ordering will allow us to guarantee that prerequisites for results will be met as we iterate
+	# through the nodes
+	def weighted_sample(self,sorted_nodes,evidence,outcome):
+		weight = 1.0
+		results = {} # store the results of each variable
+		passed = True
+		for n in sorted_nodes:
+			if (len(n.table) == 1): # since only one item, it must be a initial head node
+				if n.name in evidence: # the head is in evidence
+					if evidence[n.name] == 1:
+						results[n.name] = 1
+						weight = weight * n.table['probability']
+					else:
+						results[n.name] = 0
+						weight = weight * (1.0 - n.table['probability']) # False value
+				else:
+					if (random.random() <= n.table['probability']):
+						results[n.name] = 1
+					else:
+						results[n.name] = 0
+			else: # Non Head nodes
+				key = ""
+				for parent in n.parents: # get conditional probability key
+					key = key+str(results[parent.name])
+				if n.name in evidence: # item is in evidence and needs to be weighted
+					if evidence[n.name] == 1:
+						results[n.name] = 1
+						weight = weight * n.table[key]
+					else:
+						results[n.name] = 0
+						weight = weight * (1 - n.table[key])
+				else:
+					if (random.random() <= n.table[key]): # condition passes
+						results[n.name] = 1
+					else:
+						results[n.name] = 0
+			if (passed == True): # check if outcome is still passing
+				if (outcome[n.name] != results[n.name]):
+					passed = False
+		return passed,weight
+
+
+
 	# Returns a sample weighting
-	# data should be in the format of a dictionary.
+	# evidence should be in the format of a dictionary.
 	# E.g: {"variableA":state,"variableB":state} where state is in [0,1]
+	# Outcome should be similar. It specifies what outcome we are looking for
 	# Any variables in the graph that are not specified will be randomised and not be included in the weighting
-	# TODO
-	def likelihood_weighting(self,data):
-		return 1
+	# Sample number = how many samples you want to run before calculating final probability
+	#TODO
+	def likelihood_weighting(self,evidence,outcome,sample_number):
+		if not self.check_all_tables_init():
+			return False # tables are not initialised completely
+		sorted_list = self.topological_sort()
+		if (sorted_list == False): # cycles
+			return False
+		total_weight = 0.0  # all weights calculated
+		conditional_weight = 0.00001 # weight that fits the outcomes specified (small to ensure no division by zero)
+		for x in xrange(0,sample_number):
+			passed_outcome , weight = self.weighted_sample(sorted_list,evidence,outcome)
+			total_weight = total_weight + weight
+			if passed_outcome: # if the outcomes are passed
+				conditional_weight = conditional_weight + weight
+		return (conditional_weight/total_weight)
 
 	# Pretty printing of network
 	def print_network(self):
