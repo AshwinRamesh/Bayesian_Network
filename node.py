@@ -39,12 +39,20 @@ class Node:
 			return True
 		return False
 
+	# Remove a child-parent relationship given the name of the child
 	def  remove_child(self,name):
-		return 0
+		for n in self.children:
+			if n.name == name:
+				self.children.remove(n)
+				return True
+		return False
 
+	# Remove all children of a given node
 	def remove_all_children(self):
-		return 0
+		self.children = []
+		return True
 
+	# Get a list of all child nodes
 	def get_children(self):
 		return self.children
 
@@ -55,14 +63,23 @@ class Node:
 			return True
 		return False
 
+	# Remove a given parent from a node
 	def remove_parent(self,name):
-		return 0
+		for n in self.parents:
+			if n.name == name:
+				self.children.remove(n)
+				return True
+		return False
 
+	# Remove all parents of a given node
 	def remove_all_parents(self):
-		return 0
+		self.parents = []
+		return True
 
+	# Return list of parent nodes
 	def get_parents(self):
 		return self.parents
 
+	# TODO????
 	def set_probability(self,parents):
 		return 0

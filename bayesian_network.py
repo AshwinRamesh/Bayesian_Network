@@ -7,11 +7,13 @@
 #
 
 from node import Node
+import copy
 
 class BayesianNetwork:
 
 	def __init__(self):
 		self.nodes = []
+		self.probabilities = []
 
 	def __str__(self):
 		return "This is a Bayesian Network"
@@ -48,12 +50,61 @@ class BayesianNetwork:
 		if (parent and child): # if neither is False
 			parent.add_child(child)
 			child.add_parent(parent)
+			return True
 		return False
 
-	# TODO
-	def check_cycles(self):
-		return 0
+	#Remove the connection between two nodes if they exist
+	def deconnect_nodes(self,parent_name,child_name):
+		parent = self.get_node(parent_name)
+		child = self.get_node(child_name)
+		if (parent and child):
+			parent.remove_child(child_name)
+			child.remove_parent(parent_name)
+			return True
+		return False
 
+
+	# Copy the current network into a new network by value
+	def copy_network(self):
+		network = BayesianNetwork()
+		for n in self.nodes: # copy all nodes to new network
+			network.add_node(n.name)
+		for n in self.nodes: # copy all edges
+			for child in n.children:
+				network.connect_nodes(n,network.get_node(child.name()))
+		# TODO copy all probabilities
+		return network
+
+	# get all nodes with no parent nodes
+	def get_head_nodes(self):
+		head_list = []
+		for n in self.nodes:
+			if not n.parents:
+				head_list.append(n)
+		return head_list
+
+	# returns true if there are any edges otherwise false
+	def check_connections(self):
+		for n in self.nodes:
+			if n.parents or n.children:
+				return True
+		return False
+
+	# Use Topological Sort to check for cycles TODO: TEST THIS
+	def check_cycles(self):
+		sorted_list = []
+		network = self.copy_network() # copy of BN
+		head_nodes = network.get_head_nodes() # list of head nodes
+		while head_nodes:
+			temp_node = head_nodes.pop() # remove a node from list
+			sorted_list.append(temp_node)
+			for child in temp_node.children:
+				network.deconnect_nodes(temp_node.name, child.name)
+				if not child.parents: # child has no other parent nodes
+					sorted_list.appent(child)
+		return self.check_cycles() # returns true if connections exist -> cycles
+
+	# Pretty printing of network
 	def print_network(self):
 		if not self.nodes:
 			print "The network is empty"
