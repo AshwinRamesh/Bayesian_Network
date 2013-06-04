@@ -163,6 +163,7 @@ class BayesianNetwork:
 		results = {} # store the results of each variable
 		passed = True
 		for n in sorted_nodes:
+			#print "weighing node: %s" %(n.name)
 			if (len(n.table) == 1): # since only one item, it must be a initial head node
 				if n.name in evidence: # the head is in evidence
 					if evidence[n.name] == 1:
@@ -192,9 +193,10 @@ class BayesianNetwork:
 						results[n.name] = 1
 					else:
 						results[n.name] = 0
-			if (passed == True): # check if outcome is still passing
+			if (passed == True and (n.name in outcome)): # check if outcome is still passing
 				if (outcome[n.name] != results[n.name]):
 					passed = False
+		#print "Sample outcome %s --------%f" %(str(results),weight)
 		return passed,weight
 
 
@@ -210,7 +212,7 @@ class BayesianNetwork:
 		if not self.check_all_tables_init():
 			return False # tables are not initialised completely
 		sorted_list = self.topological_sort()
-		if (sorted_list == False): # cycles
+		if (sorted_list == False): # cycles exist
 			return False
 		total_weight = 0.0  # all weights calculated
 		conditional_weight = 0.00001 # weight that fits the outcomes specified (small to ensure no division by zero)
