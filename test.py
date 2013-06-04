@@ -10,13 +10,19 @@ cloudy = network.add_node("cloudy")
 sprinkler = network.add_node("sprinkler")
 rain = network.add_node("rain")
 wetgrass = network.add_node(("wetgrass"))
-#cyclea = network.add_node("cyclea")
+cyclea = network.add_node("cyclea")
 
 network.connect_nodes(cloudy.name,sprinkler.name)
 network.connect_nodes(cloudy.name,rain.name)
 network.connect_nodes(sprinkler.name,wetgrass.name)
 network.connect_nodes(rain.name,wetgrass.name)
+network.connect_nodes(cyclea.name,wetgrass.name)
 
+cloudy.initialise_probability_table()
+print cloudy.table
+wetgrass.initialise_probability_table()
+print "sing"
+print wetgrass.table
 #network.connect_nodes(wetgrass.name,cyclea.name)
 #network.connect_nodes(cyclea.name,rain.name)
 
@@ -28,5 +34,8 @@ network.connect_nodes(rain.name,wetgrass.name)
 #a.print_network()
 print network.check_cycles()
 network.print_network()
+
+
+
 
 

@@ -4,6 +4,7 @@
 #
 #
 #
+import itertools
 
 class Node:
 
@@ -11,6 +12,7 @@ class Node:
 		self.name = node_name
 		self.children = []
 		self.parents = []
+		self.table = None
 
 	def __str__(self):
 		return "Node: %s" %(self.name)
@@ -80,6 +82,23 @@ class Node:
 	def get_parents(self):
 		return self.parents
 
-	# TODO????
-	def set_probability(self,parents):
+	# Initialise empty dictionaries for the node to hold conditional probabilities FIX THIS SHIT
+	def initialise_probability_table(self):
+		num_parents = len(self.parents)
+		if num_parents == 0:
+			self.table = 0
+			return True
+		combos =  map(''.join, itertools.product("10", repeat=num_parents)) # list of all combinations of binary results
+		self.table = {}
+		for i in combos:
+			self.table[i] = 0
+		return True
+
+	# Takes in the TODO
+	def set_conditional_probability(self,probs):
+		if self.parents:
+			return 1 # TODO: make this binary random prob
+		else:
+			return 1 # TODO: make a matrix list???? of probs
+
 		return 0

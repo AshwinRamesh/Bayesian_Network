@@ -2,12 +2,11 @@
 
 # Usage #
 # Always add all nodes before making any connections between them.
-# If a new node has to be added, add that node. Make connections between other nodes. Add probability
+# If a new node has to be added, add that node. Make connections between other nodes. Add probability again
 #
 #
 
 from node import Node
-import copy
 
 class BayesianNetwork:
 
