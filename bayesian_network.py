@@ -140,6 +140,14 @@ class BayesianNetwork:
 		# Check everything has been initialised
 		return temp_node.check_all_probability_initialised()
 
+	# Returns a sample weighting
+	# data should be in the format of a dictionary.
+	# E.g: {"variableA":state,"variableB":state} where state is in [0,1]
+	# Any variables in the graph that are not specified will be randomised and not be included in the weighting
+	# TODO
+	def likelihood_weighting(self,data):
+		return 1
+
 	# Pretty printing of network
 	def print_network(self):
 		if not self.nodes:
