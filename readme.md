@@ -1,5 +1,14 @@
 Author: Ashwin Ramesh
 
-This is a simple binary Bayesian Network implementation.
-I had a lot of trouble trying to store the data for the conditional probability
-If anyone has a better storage method please let me know :)
+A Python Implementation of the Bayesian Network
+============================================
+
+This is a simple binary Bayesian Network implementation. I had a lot of trouble trying to store the data for the conditional probability. If anyone has a better storage method please let me know.
+
+Currently this implementation supports:
+* Creating a binary state bayesian network
+* Likelyhood Weighting Sampling
+
+Code is open source of course but please do not use it for University/College assignments.
+
+
