@@ -104,10 +104,47 @@ class BayesianNetwork:
 					head_nodes.append(child)
 		return network.check_connections() # returns true if connections exist -> cycles
 
+	# Initialise all probability table items
+	# Ensure that no changes are made to the structure of the graph after this point.
+	# If changes are made, please reinitialise all data as the structure of tables changes
+	def init_probability_tables(self):
+		for node in self.nodes:
+			node.initialise_probability_table()
+		return True
+
+	# Check all probabilities in graph are initialised
+	def check_all_tables_init(self):
+		for node in self.nodes:
+			if not node.check_all_probability_initialised():
+				return False
+		return True
+
+	# Add a single combination probability for a given node
+	# This function can be used to modify a set probability also
+	def add_probability(self,node_name,data):
+		temp_node = self.get_node(node_name)
+		if not temp_node:
+			return False
+		return temp_node.set_conditional_probability(data)
+
+	# Add all combinational probabilities for a given node
+	# It will first reset the combinations
+	def add_all_probability(self,node_name,data_array):
+		temp_node = self.get_node(node_name)
+		if not temp_node:
+			return False
+		temp_node.initialise_probability_table()
+		for data in data_array:
+			if (temp_node.set_conditional_probability(data) == False): # error occured during data reading
+				return False
+		# Check everything has been initialised
+		return temp_node.check_all_probability_initialised()
+
 	# Pretty printing of network
 	def print_network(self):
 		if not self.nodes:
 			print "The network is empty"
 		for n in self.nodes:
 			print "Node: %s ; Parents: %s ; Children: %s" %(n.name,str(n.get_parents()),str(n.get_children()))
+			print n.table
 

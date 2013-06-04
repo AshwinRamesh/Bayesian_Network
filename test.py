@@ -10,19 +10,30 @@ cloudy = network.add_node("cloudy")
 sprinkler = network.add_node("sprinkler")
 rain = network.add_node("rain")
 wetgrass = network.add_node(("wetgrass"))
-cyclea = network.add_node("cyclea")
+#cyclea = network.add_node("cyclea")
 
 network.connect_nodes(cloudy.name,sprinkler.name)
 network.connect_nodes(cloudy.name,rain.name)
 network.connect_nodes(sprinkler.name,wetgrass.name)
 network.connect_nodes(rain.name,wetgrass.name)
-network.connect_nodes(cyclea.name,wetgrass.name)
+#network.connect_nodes(cyclea.name,wetgrass.name)
 
-cloudy.initialise_probability_table()
-print cloudy.table
-wetgrass.initialise_probability_table()
-print "sing"
-print wetgrass.table
+network.init_probability_tables()
+
+network.add_probability("cloudy",{'probability':0.5})
+
+network.add_probability("sprinkler", {'cloudy':1,'probability':0.1})
+network.add_probability("sprinkler", {'cloudy':0,'probability':0.5})
+
+network.add_probability("rain", {'cloudy':1,'probability':0.8})
+network.add_probability("rain", {'cloudy':0,'probability':0.2})
+
+network.add_probability("wetgrass", {'sprinkler':1,'rain':1,'probability':0.99})
+network.add_probability("wetgrass", {'sprinkler':0,'rain':0,'probability':0.0})
+network.add_probability("wetgrass", {'sprinkler':0,'rain':1,'probability':0.9})
+network.add_probability("wetgrass", {'sprinkler':1,'rain':0,'probability':0.9})
+
+print "Data Init: %s" %(str(network.check_all_tables_init()))
 #network.connect_nodes(wetgrass.name,cyclea.name)
 #network.connect_nodes(cyclea.name,rain.name)
 
@@ -32,10 +43,9 @@ print wetgrass.table
 #print "***********"
 #a = network.copy_network()
 #a.print_network()
-print network.check_cycles()
+
+print "Cycles present in graph: %s" %(str(network.check_cycles()))
 network.print_network()
-
-
 
 
 

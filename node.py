@@ -86,19 +86,47 @@ class Node:
 	def initialise_probability_table(self):
 		num_parents = len(self.parents)
 		if num_parents == 0:
-			self.table = 0
+			self.table = {"probability":None}
 			return True
 		combos =  map(''.join, itertools.product("10", repeat=num_parents)) # list of all combinations of binary results
 		self.table = {}
 		for i in combos:
-			self.table[i] = 0
+			self.table[i] = None
 		return True
 
-	# Takes in the TODO
-	def set_conditional_probability(self,probs):
-		if self.parents:
-			return 1 # TODO: make this binary random prob
-		else:
-			return 1 # TODO: make a matrix list???? of probs
+	# Set the conditional probability for one set of results.
+	# Head node will only take one float
+	# Other nodes will take a dictionary of node names
+	# containing outcome for each condition and a final probability float
+	# Example (Head): {"probability":0.5}
+	# Example: { 'variableA': 1, 'variableB': 0, 'probability': 0.45} <-- where variable outcomes are [0,1]
+	#and probability is between 0 and 1
+	# The created key will look like "01" or "111" etc. Ordering of the parents is important. If changes are made
+	# to the graph. then the probability table will be reset and should be re-appended
+	def set_conditional_probability(self,probability):
+		if 'probability' not in probability: # a probability is defined
+			print "No probability defined in data"
+			print probability
+			return False
+		if not self.parents: # for head nodes
+			self.table = {'probability':float(probability['probability'])}
+			return True
+		# creating a dictionary key for the specified conditions.
+		key = ""
+		try:
+			for parent in self.parents: # for each parent. Ensure not to change the graph structure or this will break
+				key = key+ str(probability[parent.name]) # append the outcome to key.
+		except Exception, e:
+			print "Exception: The dictionary passed does not contain all required conditions"
+			print e
+			return False
+		#print key
+		self.table[key] = float(probability['probability']) # set the conditional probability for the created key
+		return True
 
-		return 0
+	# Ensure that all data items are initialised in table
+	def check_all_probability_initialised(self):
+		for key in self.table:
+			if self.table[key] == None:
+				return False
+		return True
