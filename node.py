@@ -67,7 +67,7 @@ class Node:
 	def remove_parent(self,name):
 		for n in self.parents:
 			if n.name == name:
-				self.children.remove(n)
+				self.parents.remove(n)
 				return True
 		return False
 

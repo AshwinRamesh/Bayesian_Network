@@ -71,7 +71,7 @@ class BayesianNetwork:
 			network.add_node(n.name)
 		for n in self.nodes: # copy all edges
 			for child in n.children:
-				network.connect_nodes(n,network.get_node(child.name()))
+				network.connect_nodes(n.name,child.name)
 		# TODO copy all probabilities
 		return network
 
@@ -90,19 +90,20 @@ class BayesianNetwork:
 				return True
 		return False
 
-	# Use Topological Sort to check for cycles TODO: TEST THIS
+	# Use Topological Sort to check for cycles
 	def check_cycles(self):
 		sorted_list = []
 		network = self.copy_network() # copy of BN
+		network.print_network()
 		head_nodes = network.get_head_nodes() # list of head nodes
 		while head_nodes:
 			temp_node = head_nodes.pop() # remove a node from list
 			sorted_list.append(temp_node)
-			for child in temp_node.children:
+			for child in list(temp_node.children):
 				network.deconnect_nodes(temp_node.name, child.name)
 				if not child.parents: # child has no other parent nodes
-					sorted_list.appent(child)
-		return self.check_cycles() # returns true if connections exist -> cycles
+					head_nodes.append(child)
+		return network.check_connections() # returns true if connections exist -> cycles
 
 	# Pretty printing of network
 	def print_network(self):
