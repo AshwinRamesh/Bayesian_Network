@@ -12,10 +12,34 @@ class Node:
 		self.children = []
 		self.parents = []
 
-	def add_child(self):
-		return 0
+	def __str__(self):
+		return "Node: %s" %(self.name)
 
-	def  remove_child(self):
+	def __repr__(self):
+		return self.__str__()
+
+	# Check if node already has speciified child
+	def check_child_exists(self,search_name):
+		for n in self.children:
+			if n.name == search_name:
+				return True
+		return False
+
+	# Check if node already has specified parent
+	def check_parent_exists(self,search_name):
+		for n in self.parents:
+			if n.name == search_name:
+				return True
+		return False
+
+	# Add child to a given node
+	def add_child(self,child_node):
+		if self.check_child_exists(child_node.name) is False:
+			self.children.append(child_node) # Add child to self
+			return True
+		return False
+
+	def  remove_child(self,name):
 		return 0
 
 	def remove_all_children(self):
@@ -24,10 +48,14 @@ class Node:
 	def get_children(self):
 		return self.children
 
-	def add_parent(self):
-		return 0
+	# Add parent to a node
+	def add_parent(self,parent_node):
+		if self.check_parent_exists(parent_node) is False: # Try and add parent connection if it doesn't exist
+			self.parents.append(parent_node) # Add parent connection
+			return True
+		return False
 
-	def remove_parent(self):
+	def remove_parent(self,name):
 		return 0
 
 	def remove_all_parents(self):
@@ -36,4 +64,5 @@ class Node:
 	def get_parents(self):
 		return self.parents
 
-	def set_probability(self,parents)
+	def set_probability(self,parents):
+		return 0
