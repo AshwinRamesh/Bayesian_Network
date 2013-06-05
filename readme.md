@@ -14,4 +14,4 @@ Code is open source of course but please do not use it for University/College as
 Running the Couldy Likeliness
 ---------------------------------------------
 - You need numpy and scipy installed as well as python2.7
-- ./cloudy_likelihood.py <sample_size>
+- ./cloudy_likelihood.py &lt; sample_size &gt;
