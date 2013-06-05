@@ -97,7 +97,7 @@ class BayesianNetwork:
 		sorted_list = []
 		return_list = []
 		network = self.copy_network() # copy of BN
-		network.print_network()
+		#network.print_network()
 		head_nodes = network.get_head_nodes() # list of head nodes
 		while head_nodes:
 			temp_node = head_nodes.pop() # remove a node from list

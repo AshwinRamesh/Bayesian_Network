@@ -1,5 +1,5 @@
-from node import Node
-from bayesian_network import BayesianNetwork
+from src.node import Node
+from src.bayesian_network import BayesianNetwork
 
 network = BayesianNetwork()
 
